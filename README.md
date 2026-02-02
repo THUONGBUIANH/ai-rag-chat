@@ -6,7 +6,7 @@ A Next.js-based conversational AI application with Retrieval Augmented Generatio
 
 AI RAG Chat is an intelligent chat application that combines large language models with a knowledge base. Users can:
 
-- Chat with an AI assistant powered by Google's Gemini 2.0 Flash model
+- Chat with an AI assistant powered by Google's Gemini model
 - Add resources and knowledge to a persistent knowledge base
 - Retrieve relevant information from the knowledge base to enhance AI responses
 - Get context-aware answers based on your custom knowledge base
@@ -26,7 +26,7 @@ AI RAG Chat is an intelligent chat application that combines large language mode
 - **Frontend**: [Next.js 16](https://nextjs.org) with React 19
 - **Backend**: [Convex](https://www.convex.dev) - serverless backend with real-time database
 - **AI/ML**:
-  - [Google Generative AI](https://ai.google.dev) - Gemini 2.0 Flash LLM
+  - [Google Generative AI](https://ai.google.dev) - Gemini LLM
   - [Vercel AI SDK](https://sdk.vercel.ai) - unified AI framework
   - Vector embeddings with Google Embedding models
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com)
