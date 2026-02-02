@@ -23,13 +23,13 @@ export default function Chat() {
                   case 'tool-addResource':
                   case 'tool-getInformation':
                     return (
-                      <p key={key}>
+                      <div key={key}>
                         call{part.state === 'output-available' ? 'ed' : 'ing'}{' '}
                         tool: {part.type}
-                        <pre className="my-4 bg-zinc-100 p-2 rounded-sm">
+                        <pre className="my-4 bg-amber-900 p-2 rounded-sm">
                           {JSON.stringify(part.input, null, 2)}
                         </pre>
-                      </p>
+                      </div>
                     );
                 }
               })}

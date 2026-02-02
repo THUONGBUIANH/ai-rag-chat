@@ -8,6 +8,6 @@ export default defineSchema({
     metadata: v.any(), 
   }).vectorIndex("by_embedding", {
     vectorField: "embedding",
-    dimensions: 1536, // Standard for text-embedding-3-small
+    dimensions: 3072, // Google Gemini embedding dimensions
   }),
 });

@@ -6,22 +6,17 @@ import {
     tool,
     UIMessage
 } from 'ai';
-
 import { google } from '@ai-sdk/google';
 import { z } from 'zod';
-import { fetchMutation } from 'convex/nextjs';
+import { fetchAction, fetchMutation } from 'convex/nextjs';
 import { api } from '@/convex/_generated/api';
-import { generateEmbeddings } from '@/lib/ai/embedding';
-
-
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30;
+import { generateEmbedding, generateEmbeddings } from '@/lib/ai/embedding';
 
 export async function POST(req: Request) {
     const { messages }: { messages: UIMessage[] } = await req.json();
 
     const result = streamText({
-        model: google('gemini-2.0-flash'),
+        model: google('gemini-2.5-flash'),
         messages: await convertToModelMessages(messages),
         stopWhen: stepCountIs(5),
         system: `You are a helpful assistant. Check your knowledge base before answering any questions.
@@ -41,11 +36,20 @@ export async function POST(req: Request) {
                     await fetchMutation(api.documents.ingest, { embeddings });
                 },
             }),
+            getInformation: tool({
+                description: `get information from your knowledge base to answer questions.`,
+                inputSchema: z.object({
+                    question: z.string().describe('the users question'),
+                }),
+                execute: async ({ question }) => {
+                    const embedding = await generateEmbedding(question);
+                    const find = await fetchAction(api.documents.search, { embedding });
+                    return find;
+                }
+            }),
 
         }
     });
-
-
 
     return result.toUIMessageStreamResponse();
 }

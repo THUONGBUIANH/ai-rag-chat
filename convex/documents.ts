@@ -1,11 +1,6 @@
 import { action, internalQuery, internalMutation, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import { GoogleGenAI } from "@google/genai";
-import { generateEmbeddings } from "@/lib/ai/embedding";
-
-
-const openai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY! });
 
 
 export const ingest = mutation({
@@ -34,27 +29,12 @@ export const saveDocument = internalMutation({
 });
 
 export const search = action({
-    args: { query: v.string() },
+    args: { embedding: v.array(v.float64()) },
     handler: async (ctx, args) => {
-        // 1. Embed the user's query
-        console.log('searching for', args.query);
-        const response = await openai.models.embedContent({
-            model: "gemini-embedding-001",
-            contents: args.query,
-            config: {
-                outputDimensionality: 1536,
-                taskType: 'SEMANTIC_SIMILARITY'
-            }
-        });
 
-        const embeddings = response.embeddings?.filter(e => e.values)[0].values;
-
-        console.log('embeddings', embeddings);
-
-
-        // 2. Perform vector search in Convex
+        // Perform vector search in Convex
         const results = await ctx.vectorSearch("documents", "by_embedding", {
-            vector: embeddings || [],
+            vector: args.embedding || [],
             limit: 3,
         });
 
@@ -62,7 +42,7 @@ export const search = action({
             return "No relevant documents found.";
         }
 
-        // 3. Fetch the actual text content
+        // Fetch the actual text content
         const descriptions: Awaited<ReturnType<typeof ctx.runQuery>>[] = await Promise.all(
             results.map((result) => ctx.runQuery(internal.documents.getDocument, { id: result._id }))
         );
